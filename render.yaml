@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: frontdesk-ai
+    runtime: docker
+    rootDir: .
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    numInstances: 1
+    healthCheckPath: /health
+    envVars:
+      # Render's generateValue produces a base64-encoded random 256-bit value
+      # when the variable is new; an existing value is retained on later syncs.
+      - key: SECRET_KEY
+        generateValue: true
+      - key: HTTPS_ONLY
+        value: "true"
+      - key: DEMO_MODE
+        value: "false"
+      - key: DEMO_SEED
+        value: "review-v1"
+      - key: DEMO_MAX_SESSIONS
+        value: "200"
+      # Public demo is a SEPARATE Render service (do not flip this production
+      # service to DEMO_MODE=true). On that demo service set DEMO_MODE=true,
+      # DEMO_ALLOW_AI=true, DEMO_SEED=review-v1, DEMO_MAX_SESSIONS=200,
+      # HTTPS_ONLY=true, a generated SECRET_KEY, and provide AI_API_KEY
+      # (plus AI_BASE_URL / AI_MODEL as needed). Leave ADMIN_*, SETUP_TOKEN
+      # and DATABASE_URL unset on the demo service.
+      - key: DEMO_ALLOW_AI
+        value: "false"
+      # DATABASE_URL sync:false asks during initial creation rather than
+      # auto-unsetting it. For a blank default leave that prompt empty: SQLite
+      # uses /app/data. Later Environment changes must be entered manually.
+      # Production needs a persistent disk at /app/data or a separately managed DB.
+      - key: SETUP_TOKEN
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: AI_BASE_URL
+        sync: false
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_MODEL
+        sync: false

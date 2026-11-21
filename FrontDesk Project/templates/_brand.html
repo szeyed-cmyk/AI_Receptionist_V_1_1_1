@@ -1,0 +1,4 @@
+{# Brand mark: the uploaded logo (Admin -> Settings -> Brand logo) or the default "F". #}
+{% macro brand_mark(url, cls="") -%}
+{%- if url -%}<span class="logo-mark logo-img rounded-full overflow-hidden aspect-square shrink-0 {{ cls }}"><img src="{{ url }}" alt="Logo" class="w-full h-full object-cover object-center"></span>{%- else -%}<span class="logo-mark {{ cls }}">F</span>{%- endif -%}
+{%- endmacro %}
